@@ -21,11 +21,16 @@ elements = ["Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon", "Ni
             "Hassium", "Meitnerium", "Roentgenium", "Nihonium", "Flerovium", "Moscovium", "Livermorium",
             "Tennessine", "Oganesson", ]
 
-defaultResponse = createMessage("To create a game: 'create game' \n "
-                                "To join a game: 'join {insert game id} \n\n"
-                                "If you are the owner: \n"
-                                ""
-                                "'")
+defaultResponse \
+    = createMessage("To create a game: `create game` \n "
+                    "To join a game: `join {insert game id}` \n"
+                    "To leave a game: `leave` \n"
+                    "To check the status of your game: `status` \n\n"
+                    "If you are the owner: \n"
+                    "To add a role: `add {quantity} {role name}`\n"
+                    "To remove a role (or just deduct from quantity: `remove {quantity} {existing role name}`\n"
+                    "To clear all roles: `clear`\n"
+                    "To start role distribution: `start`\n")
 
 errorResponse = createMessage("Sorry, I didn't understand your request.")
 
