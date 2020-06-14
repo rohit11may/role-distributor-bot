@@ -4,7 +4,7 @@ from pymessenger.bot import Bot
 
 from role_distributor import RoleDistributor
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='')
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
 
@@ -13,8 +13,8 @@ rd = RoleDistributor()
 
 
 @app.route("/privacypolicy", methods=['GET', 'POST'])
-def privacypolicy():
-    return "HELLO WORLD"
+def privacy_policy():
+    return app.send_static_file('privacypolicy.html')
 
 
 # We will receive messages that Facebook sends our bot at this endpoint

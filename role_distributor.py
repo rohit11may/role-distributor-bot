@@ -88,6 +88,11 @@ class RoleDistributor(object):
         return defaultResponse
 
     def _memberIsOwner(self, memberId):
+        """
+
+        :param memberId: memberId to check if they own a game
+        :return: true if they own a game, false otherwise
+        """
         if memberId in self.players:
             currentGameId = self.players[memberId]
             return currentGameId in self.games and self.games[currentGameId].owner == memberId
