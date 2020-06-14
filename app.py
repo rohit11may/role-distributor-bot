@@ -1,14 +1,20 @@
-import random
+import os
 from flask import Flask, request
 from pymessenger.bot import Bot
 
 from role_distributor import RoleDistributor
 
 app = Flask(__name__)
-ACCESS_TOKEN = 'EAAcYFzJI9TcBAO3tsaPkzyZCv6oWIFkV6xmoOPZCTVmE9hnvgLRkJRZAeIXpnJihHDZB3xl5yCbheVRewRDJaOWfknnxHA5rLIQrbKuwjszAczYwQ3Hkfwa8UHTDx6PZAdvzSRBt6mK5qZBMRd2DZAgJ1pZC2DHlZCnftPh4SuMOuZBAZDZD'
-VERIFY_TOKEN = 'RoleDistributorBot1234'
+ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
+
 bot = Bot(ACCESS_TOKEN)
 rd = RoleDistributor()
+
+
+@app.route("/privacypolicy", methods=['GET', 'POST'])
+def privacypolicy():
+    return "HELLO WORLD"
 
 
 # We will receive messages that Facebook sends our bot at this endpoint
