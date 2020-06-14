@@ -38,8 +38,13 @@ def receive_message():
                     if message['message'].get('text'):
                         response = rd.handleMsg(message)
                         send_message(recipient_id, response['message'])
-                        if response['ownerId']:
+                        if response['ownerNotif'] and response['ownerId']:
                             send_message(response['ownerId'], response['ownerNotif'])
+
+                        if response['roles']:
+                            for memberId, role in response['roles']:
+                                send_message(memberId, f"You are {role}!")
+                            send_message(response['ownerId'], "Roles distributed!")
 
     return "Message Processed"
 
