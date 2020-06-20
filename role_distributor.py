@@ -1,5 +1,6 @@
 from random import choice
 from game import Game
+from db import Games, Players
 
 
 def createMessage(text, ownerId=None, ownerNotif=None, roles=None):
@@ -36,9 +37,9 @@ errorResponse = createMessage("Sorry, I didn't understand your request.")
 
 
 class RoleDistributor(object):
-    def __init__(self):
-        self.games = {}  # Game id -> Game
-        self.players = {}  # Member id -> Game id
+    def __init__(self, rd):
+        self.games = Games(rd)  # Game id -> Game
+        self.players = Players(rd)  # Member id -> Game id
 
     def handleMsg(self, msg):
         text = msg['message'].get('text').lower().split(' ')
@@ -132,10 +133,12 @@ class RoleDistributor(object):
         game = self.games[self.players[memberId]]
         if addRole:
             game.addRole(role, quantity)
+            self.games[self.players[memberId]] = game  # Commit to redis
             return createMessage(f"Roles added! Current game: \n\n "
                                  f"{game}")
         else:
             game.removeRole(role, quantity)
+            self.games[self.players[memberId]] = game  # Commit to redis
             return createMessage(f"Roles removed! Current game: \n\n"
                                  f"{game}")
 
@@ -150,6 +153,7 @@ class RoleDistributor(object):
             if gameId in self.games:
                 game = self.games[gameId]
                 removed = game.removeMember(memberId)
+                self.games[gameId] = game  # Commit to redis
 
                 try:
                     del self.players[memberId]
@@ -178,6 +182,7 @@ class RoleDistributor(object):
         if gameId in self.games:
             game = self.games[gameId]
             game.addMember(memberId, isOwner)
+            self.games[gameId] = game  # Commit to redis
             self.players[memberId] = gameId
 
             return createMessage(text=f"Successfully joined game! "
@@ -211,6 +216,7 @@ class RoleDistributor(object):
 
         game = self.games[self.players[memberId]]
         game.clearRoles()
+        self.games[self.players[memberId]] = game
         return createMessage(f"Cleared the roles. \n\n {game}")
 
     def status(self, memberId):
@@ -226,5 +232,25 @@ class RoleDistributor(object):
 
 
 if __name__ == "__main__":
-    rd = RoleDistributor()
-    print(rd.handleMsg("create game"))
+    import redis, os
+
+    rd = RoleDistributor(redis.from_url(os.environ["REDIS_URL"]))
+
+
+    def sampleMessage(txt, id=1):
+        return dict(message=dict(text=txt), sender=dict(id=id))
+
+
+    game_id = rd.handleMsg(sampleMessage("create game"))['message'].split(' ')[5][:-1]
+    print(rd.handleMsg(sampleMessage("add 1 bomber")))
+    print(rd.handleMsg(sampleMessage("add 2 president")))
+    print(rd.handleMsg(sampleMessage("status")))
+    print(rd.handleMsg(sampleMessage(f"join {game_id}", 4)))
+    print(rd.handleMsg(sampleMessage(f"join {game_id}", 2)))
+    print(rd.handleMsg(sampleMessage("status")))
+    print(rd.handleMsg(sampleMessage("remove 1 president")))
+    print(rd.handleMsg(sampleMessage("add 6 criminal")))
+    print(rd.handleMsg(sampleMessage("clear")))
+    print(rd.handleMsg(sampleMessage("add 3 bomber")))
+    print(rd.handleMsg(sampleMessage("start")))
+    print(rd.handleMsg(sampleMessage("leave")))

@@ -1,4 +1,5 @@
 from random import shuffle
+import json
 
 
 class Game(object):
@@ -14,6 +15,10 @@ class Game(object):
 
         return f"{len(self.members)} in lobby.\n\n" \
                f"{role_summary}"
+
+    def toJson(self):
+        retJson = dict(members=list(self.members), roles=self.roles, owner=self.owner)
+        return json.dumps(retJson)
 
     def addMember(self, member, isOwner=False):
         self.members.add(member)
@@ -89,3 +94,4 @@ if __name__ == "__main__":
     print(g)
     print(g.readyToStart())
     g.distributeRoles()
+    print(g.toJson())

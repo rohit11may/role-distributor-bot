@@ -1,15 +1,17 @@
 import os
+
+import redis
 from flask import Flask, request
 from pymessenger.bot import Bot
-
 from role_distributor import RoleDistributor
 
 app = Flask(__name__, static_url_path='', static_folder='')
+r = redis.from_url(os.environ.get("REDIS_URL"))
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
 VERIFY_TOKEN = os.environ['VERIFY_TOKEN']
 
 bot = Bot(ACCESS_TOKEN)
-rd = RoleDistributor()
+rd = RoleDistributor(r)
 
 
 @app.route("/privacypolicy", methods=['GET', 'POST'])
@@ -65,4 +67,9 @@ def send_message(recipient_id, response):
 
 
 if __name__ == "__main__":
-    app.run()
+    # app.run(debug=True)
+    k = "Hello"
+    v = "World"
+    print(r.mset({k: v}))
+    print(r.delete("Hello"))
+    print(r.exists(k))
