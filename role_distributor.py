@@ -7,20 +7,8 @@ def createMessage(text, ownerId=None, ownerNotif=None, roles=None):
     return dict(message=text, ownerId=ownerId, ownerNotif=ownerNotif, roles=roles)
 
 
-elements = ["Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon", "Nitrogen", "Oxygen", "Fluorine", "Neon",
-            "Sodium", "Magnesium", "Aluminum", "Silicon", "Phosphorus", "Sulfur", "Chlorine", "Argon", "Potassium",
-            "Calcium", "Scandium", "Titanium", "Vanadium", "Chromium", "Manganese", "Iron", "Cobalt", "Nickel",
-            "Copper", "Zinc", "Gallium", "Germanium", "Arsenic", "Selenium", "Bromine", "Krypton", "Rubidium",
-            "Strontium", "Yttrium", "Zirconium", "Niobium", "Molybdenum", "Technetium", "Ruthenium", "Rhodium",
-            "Palladium", "Silver", "Cadmium", "Indium", "Tin", "Antimony", "Tellurium", "Iodine", "Xenon", "Cesium",
-            "Barium", "Lanthanum", "Cerium", "Praseodymium", "Neodymium", "Promethium", "Samarium", "Europium",
-            "Gadolinium", "Terbium", "Dysprosium", "Holmium", "Erbium", "Thulium", "Ytterbium", "Lutetium", "Hafnium",
-            "Tantalum", "Tungsten", "Rhenium", "Osmium", "Iridium", "Platinum", "Gold", "Mercury", "Thallium", "Lead",
-            "Bismuth", "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Thorium", "Protactinium",
-            "Uranium", "Neptunium", "Plutonium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium",
-            "Fermium", "Mendelevium", "Nobelium", "Lawrencium", "Dubnium", "Seaborgium", "Bohrium",
-            "Hassium", "Meitnerium", "Roentgenium", "Nihonium", "Flerovium", "Moscovium", "Livermorium",
-            "Tennessine", "Oganesson", ]
+with open("wordlist.txt") as f:
+    words = f.readline().split(',')
 
 defaultResponse \
     = createMessage("To create a game: `create game` \n "
@@ -198,7 +186,7 @@ class RoleDistributor(object):
         :param ownerId: person creating game
         :return: game id of new game
         """
-        gameId = choice(elements) + choice(elements)
+        gameId = choice(words) + choice(words)
         self.players[ownerId] = gameId
 
         self.games[gameId.lower()] = Game()
@@ -242,6 +230,7 @@ if __name__ == "__main__":
 
 
     game_id = rd.handleMsg(sampleMessage("create game"))['message'].split(' ')[5][:-1]
+    print(game_id)
     print(rd.handleMsg(sampleMessage("add 1 bomber")))
     print(rd.handleMsg(sampleMessage("add 2 president")))
     print(rd.handleMsg(sampleMessage("status")))
